@@ -160,6 +160,7 @@ namespace DBBackup
                         }
 
                         // 删除历史备份
+                        Common.WriteLog("removeHistory:" + removeHistory);
                         if (removeHistory == "1")
                         {
                             //保留天数
@@ -169,20 +170,19 @@ namespace DBBackup
                             if (storeDays != "" && Int32.TryParse(storeDays, out intStoreDays))
                             {
                                 DateTime historyEnd = DateTime.MinValue;
-                                bool isPreDate = false;
-                                bool isDate = false;
+                                
                                 // 如果文件名中包含predate，即要迁移的是前一天的文件，那么删除处理时
                                 if (tempFile.Contains("{predate}"))
                                 {
-                                    isPreDate = true;
                                     historyEnd = today.AddDays(-intStoreDays - 1);
                                 }
 
                                 if (tempFile.Contains("{date}"))
                                 {
-                                    isDate = true;
                                     historyEnd = today.AddDays(-intStoreDays);
                                 }
+                                Common.WriteLog("historyEnd:" + historyEnd.ToString("yyyy-MM-dd"));
+
                                 // 删除 (historyEnd - 5) -> historyEnd 的记录
                                 for (int i = 0; i < 5; i++)
                                 {
@@ -193,6 +193,7 @@ namespace DBBackup
                                         // 从destPath中删除文件
                                         if (File.Exists(destPath + "\\" + removeFileName))
                                         {
+                                            Common.WriteLog("history - remove:" + (destPath + "\\" + removeFileName));
                                             File.Delete(destPath + "\\" + removeFileName);
                                         }
                                     }
